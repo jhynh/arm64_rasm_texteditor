@@ -23,13 +23,24 @@ string_Substring:
 
     MOV X0, X19
     BL String_Copy
-    LDR X19,=qdCopy1
-    STR X0,[X19]
+    LDR X1,=qdCopy1
+    LDR X0,[X0]
+    STR X0,[X1]
 
-    MOV X0, X20
+    MOV X0,X20
     BL String_Copy
+    LDR X1,=qdCopy2
+    LDR X0,[X0]
+    STR X0,[X1]
+
+    LDR X19,=qdCopy1
+    LDR X0,[X19]
+    BL String_toLowerCase
     LDR X20,=qdCopy2
-    STR X0,[X20]
+    LDR X0,[X20]
+    BL String_toLowerCase
+    LDR X19,[X19]
+    LDR X20,[X20]
 
     MOV X0, X19
     BL strlength                    //get length

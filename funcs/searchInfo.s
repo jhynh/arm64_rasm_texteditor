@@ -1,7 +1,6 @@
     .data
     szPrompt:       .asciz  "search for: "
-    szTrue:         .asciz  "\ntrue\n"
-    szFalse:         .asciz "\nfalse\n"
+    chLF:         .byte   10
     szSubArr:       .skip   21
     
 
@@ -52,18 +51,15 @@ over:
     //follow nxt ptr
     LDR X19,[X19, #8]
     CMP X19, #0
-    B.EQ false
+    B.EQ done
 
     B loop
 
-true:
-    LDR X0,=szTrue
-    BL putstring
-    B done
-false:
-    LDR X0,=szFalse
-    BL putstring
 done:
+    LDR X0,=chLF
+    BL putch
+    LDR X0,=chLF
+    BL putch
     LDR X30,[SP], #16       //pop
     LDR X29,[SP], #16       //pop
     LDR X28,[SP], #16       //pop
