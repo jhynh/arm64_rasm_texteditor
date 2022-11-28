@@ -64,11 +64,19 @@ add:
     B loop
 
 true:
-    MOV X0, #1
+    MOV X19, #1
     B done
 false:
-    MOV X0, #0
+    MOV X19, #0
 done:
+    LDR X0,=qdCopy1
+    LDR X0,[X0]
+    BL free
+    LDR X0,=qdCopy2
+    LDR X0,[X0]
+    BL free
+
+    MOV X0,X19
     LDR X30, [SP], #16			    // POP print
     LDR X23, [SP], #16			    // POP print
     LDR X22, [SP], #16			    // POP print
