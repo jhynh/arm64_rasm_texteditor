@@ -1,6 +1,7 @@
 //printing out the linked list
     .data
-    szStuff:        .asciz "\nprinting stuff\n"
+    qdNxt:      .quad 0
+    chLF:       .byte 10
     .global printContent
     .text
 printContent:
@@ -17,33 +18,46 @@ printContent:
     STR X29, [SP,#-16]!     //push
     STR X30, [SP,#-16]!     //push
 
+    MOV X19, X1
+    MOV X20, X2
 
+    MOV X0, X19  //move headptr
+    LDR X0,[X0] //deref
+    CMP X0, #0  //see contents
+    B.EQ done   //exit
+    LDR X0,[X0] //unload
+    BL putstring//print
+
+    MOV X0, X19      //back to head
+    LDR X0,[X0]
+    LDR X0,[X0, #8] //nxt ptr
+    CMP X0, #0  //check null
+    B.EQ done
+    LDR X21,=qdNxt  //load var
+    STR X0,[X21]    //store nxt ptr
+
+loop:
 //assume X1 and X2 contain head and tail ptr
-    MOV X0, X1
-    LDR X0,[X0]
-    LDR X0,[X0]
-    BL putstring
-
-    MOV X0, X1
-    LDR X0,[X0]
-    LDR X0,[X0, #8]         //load nxt ptr
+    LDR X0,=qdNxt
     LDR X0,[X0]             //deref
-    BL putstring            //print
-    MOV X0, X1
+    CMP X0, #0
+    B.EQ done               //empty address for content
     LDR X0,[X0]
-    LDR X0,[X0, #8]         //load next ptr
-    LDR X0,[X0, #8]         //load next ptr
-    LDR X0,[X0]
-    BL putstring            //print
-        MOV X0, X1
-    LDR X0,[X0]
-    LDR X0,[X0, #8]         //load next ptr
-    LDR X0,[X0, #8]         //load next ptr
-    LDR X0,[X0, #8]         //load next ptr
-    LDR X0,[X0]
-    BL putstring            //print
+    BL putstring    //print
 
-end:
+    LDR X0,[X21]            //deref node ptr
+    LDR X0,[X0, #8]
+    CMP X0, #0
+    B.EQ done
+    LDR X21,=qdNxt
+    STR X0,[X21]
+    B loop
+
+done:
+    LDR X0,=chLF
+    BL putch
+    LDR X0,=chLF
+    BL putch
     LDR X30,[SP], #16       //pop
     LDR X29,[SP], #16       //pop
     LDR X28,[SP], #16       //pop

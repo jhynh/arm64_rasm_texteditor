@@ -15,7 +15,7 @@ saveInfo:
     STR X28, [SP,#-16]!     //push
     STR X29, [SP,#-16]!     //push
     STR X30, [SP,#-16]!     //push
-
+//prints to the file, run through all nodes and print
 
 
     LDR X30,[SP], #16       //pop

@@ -15,7 +15,8 @@ inputInfo:
     STR X28, [SP,#-16]!     //push
     STR X29, [SP,#-16]!     //push
     STR X30, [SP,#-16]!     //push
-
+//gets user input either from a file or keyboard, insert into node
+    
 
 
     LDR X30,[SP], #16       //pop

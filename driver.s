@@ -99,6 +99,7 @@ storeLine:
     BL insertLast
     LDR X22,=szLine
     MOV X0, #0
+//clears out all bytes in szLine
     STR X0,[X22]
     ADD X22, X22, #8
     STR X0,[X22]
