@@ -15,8 +15,7 @@ editInfo:
     STR X28, [SP,#-16]!     //push
     STR X29, [SP,#-16]!     //push
     STR X30, [SP,#-16]!     //push
-
-//hi
+//opens to a node and overwrites with a user inputted string
 
     LDR X30,[SP], #16       //pop
     LDR X29,[SP], #16       //pop
