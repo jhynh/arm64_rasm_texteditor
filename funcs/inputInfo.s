@@ -2,13 +2,13 @@
 	.equ AT_FDCWD,  -100	//a number assigned by the OS
 	.equ RW_RW__,   0640    //owner & group has read and write
     .data
-    chRead:         .byte   1
     szFile:     .asciz  "./input.txt"
     iFD:            .byte   0
     szLine:         .skip   56
     headPtr:        .quad   0
     tailPtr:        .quad   0
     newNode:        .quad   0
+    chRead:         .byte   1
     .global inputInfo
     .text
 inputInfo:
@@ -51,6 +51,7 @@ readIn:
 
 //save
 LDR X22,=szLine
+MOV X23, #0
 //retrieve a byte
 loop:
     LDR X29,=headPtr
@@ -106,10 +107,10 @@ storeLine:
 //load head & tail ptr in X1 and X2
 done:
     //close file
-    LDR X1,=iFD         //load fd
-    LDR X0,[X1]         //deref
-    MOV X8, #57         //load exit
-    SVC 0               //syscall
+    LDR X1,=iFD             //load fd
+    LDR X0,[X1]             //deref
+    MOV X8, #57             //load exit
+    SVC 0                   //syscall
     LDR X30,[SP], #16       //pop
     LDR X29,[SP], #16       //pop
     LDR X28,[SP], #16       //pop
@@ -124,7 +125,7 @@ done:
     LDR X19,[SP], #16       //pop
     RET LR
 
-    //------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------
 //node functions
 //------------------------------------------------------------------------------------
 insertLast:
@@ -171,7 +172,7 @@ insertLast:
     LDR X0,=tailPtr
     LDR X0,[X0]
 
-    LDR X1,=newNode
+    LDR X1,=newNode         
     LDR X1,[X1]             //doesn't change X0
     STR X1,[X0, #8]         //tail ptr->nxt = newnode
 
