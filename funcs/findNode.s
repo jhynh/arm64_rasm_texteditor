@@ -35,7 +35,8 @@ findNode:
 //traverse each node and get the strlength, when the total length = szIndex, return address
     LDR X0,=szIndex
     BL ascint64         //convert
-    MOV X22, X0         //store index
+    LDR X22,=szIndex
+    STR X0,[X22]
 
     LDR X3,=qdCur
     MOV X0, X19         //move headptr
@@ -45,7 +46,8 @@ findNode:
     B.EQ done           //exit
     LDR X0,[X0]         //unload
     BL strlength        //print
-    ADD X28, X28, X0    //count
+    SUB X0, X0, #1
+    ADD X24, X24, X0    //count
     BL cmpr
 
     LDR X3,=qdCur
@@ -68,7 +70,8 @@ loop:
     B.EQ done           //empty address for content
     LDR X0,[X0]
     BL strlength
-    ADD X28, X28, X0
+    SUB X0, X0, #1
+    ADD X24, X24, X0
     BL cmpr             //compare the total and target index
 
     LDR X0,[X21]
@@ -82,6 +85,9 @@ loop:
 done:
 //--------------------------------------------------------------------------------------------------------------
     LDR X0,[X0]             //ptr to a ptr to a storage ptr of string
+    LDR X0,[X0]
+    LDR X0,[X0]
+    BL putstring
     LDR X30,[SP], #16       //pop
     LDR X29,[SP], #16       //pop
     LDR X28,[SP], #16       //pop
@@ -98,9 +104,10 @@ done:
 
 cmpr:
 //X28 contains the total count, see if the current count is above or at our targetted index
-    CMP X28, X22            //compare target to current count
-    B.GT found             //if total count > than our target, we have it, return the address
-    B.EQ found
+    LDR X22,=szIndex
+    LDR X22,[X22]
+    CMP X24, X22            //compare target to current count
+    B.GE found             //if total count > than our target, we have it, return the address
     B loss
 found:
 //load the address of current node and exit

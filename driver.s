@@ -147,7 +147,8 @@ printMenu:
 //switch statement
     CMP x20, 1
     B.NE switch
-    BL printContent
+    BL findNode
+    //BL printContent
     B printMenu
 switch:
     CMP X20, 2
