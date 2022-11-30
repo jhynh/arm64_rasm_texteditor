@@ -6,6 +6,7 @@
 //Date: November 23, 2022 at 11:00 PM 
 //Purpose: 
 // create a pseudo text editor using ARM64 with persistent data, using external functions and accept input txt files
+//failed functions: 2,3,6
 //******************************************************************************/
 	.equ CREATERW, 00102    //read/write and create if doesn't exist
 	.equ AT_FDCWD,  -100	//a number assigned by the OS
@@ -15,7 +16,7 @@
 //variables
 //-------------------------------------------------------------------------------
     szpromptGuard1: .asciz  "------------------------------------------------------------------------------------------------------------------\n"
-    szTitle:        .asciz  "RASM4 TEXT EDITOR\nData Structure Heap Memory Consumption: 00000000 bytes\nNumber of Nodes: 0\n"
+    szTitle:        .asciz  "RASM4 TEXT EDITOR\nData Structure Heap Memory Consumption: 00000000 bytes\nNumber of Nodes: "
     szPrompt1:      .asciz  "<1> View all strings\n"
     szPrompt2:      .asciz  "<2> Add string\n    <A> from Keyboard\n    <B> from File. Static file name input.txt\n\n"
     szPrompt3:      .asciz  "<3> Delete string. Given an index #, delete the entire string and de-allocate memory (including the node).\n"
@@ -24,7 +25,7 @@
     szPrompt6:      .asciz  "<6> Save File (output.txt)\n"
     szPrompt7:      .asciz  "<7> Quit\n"
     szpromptGuard2: .asciz  "------------------------------------------------------------------------------------------------------------------\n"
-
+    szPromptUser:   .asciz  "choice: "
     szFile1:        .asciz  "./output.txt"
     szFile2:        .asciz  "./input.txt"
 
@@ -37,6 +38,8 @@
     headPtr:        .quad   0
     tailPtr:        .quad   0
     newNode:        .quad   0
+    szNode:         .skip   21
+    szByte:         .skip   21
 //-------------------------------------------------------------------------------
 
     .global _start                  //global label
@@ -92,6 +95,7 @@ doneLine:
     MOV X23, #1
 //now parse content.txt until EOF and store each line into a node
 storeLine:
+    ADD X24, X24, #1
 //allocate space for headPtr and tailPtr, string will be in X21
     LDR X21,=szLine
     MOV X0, X21
@@ -123,11 +127,20 @@ done:
     MOV X8, #57         //load exit
     SVC 0               //syscall
 printMenu:
+    MOV X0, X24
+    LDR X1,=szNode
+    BL int64asc
 //-------------------------------------------------------------------------------
     LDR X0,=szpromptGuard1          //load
     BL putstring                    //print
     LDR X0,=szTitle                 //load
     BL putstring                    //print
+    
+    LDR X0,=szNode
+    BL putstring
+    LDR X0,=chLF
+    BL putch
+
     LDR X0,=szPrompt1               //load
     BL putstring                    //print
     LDR X0,=szPrompt2               //load
@@ -144,6 +157,8 @@ printMenu:
     BL putstring                    //print
     LDR X0,=szpromptGuard2          //load
     BL putstring                    //print
+    LDR X0,=szPromptUser
+    BL putstring
 //-------------------------------------------------------------------------------
     LDR X0,=inputBuff
     MOV X1, 2

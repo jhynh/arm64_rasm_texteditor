@@ -1,5 +1,5 @@
 	.equ AT_FDCWD, 			-100	//a number assigned by the OS
-    .equ CREATEWOT, 		01101 	//create-truncate file if does not exist for writing
+    .equ CREATEWOT, 		02001 	//create-truncate file if does not exist for writing
     .equ  RW_RW__, 0640
     .data
     szFile:     .asciz  "./output.txt"
@@ -42,7 +42,7 @@ saveInfo:
     CMP X0, #0  //see contents
     B.EQ done   //exit
     LDR X0,[X0] //unload
-    BL putstring//print
+    BL printNode
 
     MOV X0, X19      //back to head
     LDR X0,[X0]
@@ -59,7 +59,7 @@ loop:
     CMP X0, #0
     B.EQ done               //empty address for content
     LDR X0,[X0]
-    BL putstring    //print
+    BL printNode
 
     LDR X0,[X21]            //deref node ptr
     LDR X0,[X0, #8]
@@ -91,19 +91,16 @@ done:
 
 printNode:
     STR x30, [SP, #-16]!    //push the link register so that when we branch we don't get messed
+    LDR X0,[X0]
     LDR X6,=szTmp
-    LDR X5,[X0]
-    STR X5,[X6]
+    STR X0,[X6]
     LDR X0,=szTmp
     BL strlength
-    
+    MOV X2, X0
 
 	MOV X8, #64				//write
 //make sure X0 has fd in it
-	LDR X1,=szTmp			//load string
-	LDR X0,=szTmp
-    BL strlength
-    MOV X2, X0
+	LDR X1,=szTmp
 	SVC 0					//service call
 
 	LDR X1,=iFD				//load file ds
